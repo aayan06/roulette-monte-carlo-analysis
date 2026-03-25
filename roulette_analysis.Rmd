@@ -1,0 +1,54 @@
+---
+title: "Lab2_Roulette_Simulation"
+author: "Aayan Abdullah"
+date: "2025-05-16"
+output: pdf_document
+---
+```{r}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+set.seed(123)
+```
+```{r}
+# American roulette simulation
+p_win_american <- 18/38
+n_spins1       <- 200
+
+wallet <- numeric(n_spins1 + 1)
+wallet[1] <- 200
+
+for (i in seq_len(n_spins1)) {
+  win <- runif(1) < p_win_american
+  wallet[i + 1] <- wallet[i] + ifelse(win,  1, -1)
+}
+
+plot(
+  wallet,
+  type = "l",
+  xlab = "Spin Number",
+  ylab = "Wallet Balance ($)",
+  main = "200 Spin Wallet Path"
+)
+grid()
+
+```
+
+```{r}
+# Analytical for European roulette
+p_win_eu <- 18/37
+ev       <- p_win_eu * 1 + (1 - p_win_eu) * (-1)
+var_eu   <- 1 - ev^2
+
+cat(sprintf("Analytical EV:  %.6f\n", ev))
+cat(sprintf("Analytical Var: %.6f\n\n", var_eu))
+
+# Simulation
+n_spins2  <- 10000
+outcomes  <- ifelse(runif(n_spins2) < p_win_eu, 1, -1)
+sim_ev    <- mean(outcomes)
+sim_var   <- var(outcomes)
+
+cat(sprintf("Simulated EV:  %.6f\n", sim_ev))
+cat(sprintf("Simulated Var: %.6f\n", sim_var))
+
+```
+
